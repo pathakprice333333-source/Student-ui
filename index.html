@@ -30,7 +30,7 @@
       <button class="mode" data-mode="Competitive Exam">🎯 <span>Competitive Exam</span></button>
     </div>
     <div class="sidebar-bottom">
-      <button>👤 Profile</button><button>⚙️ Settings</button>
+      <button id="profileBtn">👤 Profile</button><button id="settingsBtn">⚙️ Settings</button>
     </div>
   </aside>
 
@@ -76,10 +76,56 @@
       <button>💬<span>Chat</span></button>
       <button>📚<span>Study</span></button>
       <button>📰<span>News</span></button>
-      <button>👤<span>Profile</span></button>
+      <button id="bottomProfileBtn">👤<span>Profile</span></button>
     </nav>
   </main>
 </div>
+
+<div class="modal-overlay hidden" id="profileModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>👤 Profile</h3>
+      <button class="modal-close" data-close="profileModal">✕</button>
+    </div>
+    <div class="field">
+      <label for="profileName">Your name</label>
+      <input type="text" id="profileName" placeholder="e.g. Pathak" maxlength="30">
+    </div>
+    <p class="modal-note">Saved on this device only — no account needed.</p>
+    <button class="modal-save" id="saveProfileBtn">Save</button>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="settingsModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>⚙️ Settings</h3>
+      <button class="modal-close" data-close="settingsModal">✕</button>
+    </div>
+    <div class="field">
+      <label for="educationLevel">Education level</label>
+      <select id="educationLevel">
+        <option value="General">General</option>
+        <option value="Class 6-8">Class 6–8</option>
+        <option value="Class 9-10">Class 9–10</option>
+        <option value="Class 11-12">Class 11–12</option>
+        <option value="College/University">College / University</option>
+        <option value="Competitive Exam">Competitive Exam Prep</option>
+      </select>
+      <p class="field-hint">AI answers adjust to this level.</p>
+    </div>
+    <div class="field toggle-row">
+      <label for="darkModeToggle">Dark mode</label>
+      <label class="switch">
+        <input type="checkbox" id="darkModeToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <button class="modal-save" id="saveSettingsBtn">Save</button>
+    <button class="modal-danger" id="clearDataBtn">Clear saved data on this device</button>
+  </div>
+</div>
+
 <script src="script.js"></script>
 </body>
 </html>
