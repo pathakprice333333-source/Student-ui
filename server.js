@@ -9,7 +9,16 @@ const MODEL = process.env.GEMINI_MODEL || "gemini-3.7-flash";
 
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
-app.use(express.static(__dirname)); // NEW: serves index.html, style.css, script.js from this same folder
+// Serve ONLY the frontend files by name — not the whole folder (keeps server.js,
+// package.json, etc. from being publicly downloadable at their URL).
+const ALLOWED_STATIC_FILES = new Set(["index.html", "style.css", "script.js"]);
+app.get("/", (req, res) => res.sendFile("index.html", { root: __dirname }));
+app.get("/:file", (req, res, next) => {
+  if (ALLOWED_STATIC_FILES.has(req.params.file)) {
+    return res.sendFile(req.params.file, { root: __dirname });
+  }
+  next();
+});
 
 const ai = process.env.GEMINI_API_KEY &&
            !process.env.GEMINI_API_KEY.startsWith("PASTE_")
@@ -30,6 +39,28 @@ const modeInstructions = {
   "Coding Tutor": "Teach code clearly, explain errors, and provide safe runnable examples.",
   "Competitive Exam": "Focus on exam-oriented concepts, practice, shortcuts only when reliable, and explanations."
 };
+
+const CREATOR_REPLY =
+  "Mere malik Prince aur Ankur hain. (In English: My masters are Prince and Ankur.)";
+
+function isCreatorQuestion(message) {
+  // Must ask about THIS app/bot specifically — not any general "who made X" question
+  // (e.g. "Taj Mahal kisne banaya" must NOT trigger this).
+  const text = message.toLowerCase();
+
+  const selfRef =
+    /\b(you|your|yourself)\b/.test(text) ||
+    /\bthis\s+(app|bot|ai|website|site)\b/.test(text) ||
+    /\b(tumhe|tumko|tujhe|tumhara|tumhari|aapko|aapka|aapki|tera|teri)\b/.test(text) ||
+    /\b(is|ye|yeh)\s+(app|bot)\b/.test(text);
+
+  if (!selfRef) return false;
+
+  const creationWord = /\b(made|create|created|creator|built|build|develop|developer|owns|owner|malik|banaya|banaaya|banayaa)\b/.test(text);
+  const whoOrKisne = /\bwho\b/.test(text) || /\bkis\s*ne\b/.test(text);
+
+  return creationWord || whoOrKisne;
+}
 
 app.get("/api/status", (req, res) => {
   res.json({ success: true, message: "StudentAI backend is running 🚀" });
@@ -52,6 +83,10 @@ app.post("/api/chat", async (req, res) => {
     return res.status(400).json({ success: false, error: "Message is required." });
   }
 
+  if (isCreatorQuestion(message)) {
+    return res.json({ success: true, mode, reply: CREATOR_REPLY, source: "StudentAI" });
+  }
+
   if (!ai) {
     return res.status(503).json({
       success: false,
@@ -71,6 +106,7 @@ Mode instructions:
 ${instruction}
 
 Rules:
+- If asked who made, created, owns, or is the "malik" of you/this app, reply with exactly this and nothing else: "${CREATOR_REPLY}"
 - Understand Hindi, English, and Hinglish.
 - Match the user's language where practical.
 - Explain rather than encouraging cheating.
@@ -83,30 +119,40 @@ ${message}
 `;
 
   try {
-    const response = await ai.models.generateContent({
+    const stream = await ai.models.generateContentStream({
       model: MODEL,
       contents: prompt,
       config: {
         temperature: 0.5,
-        maxOutputTokens: 1200
+        maxOutputTokens: 1000
       }
     });
 
-    const reply = response.text || "I could not generate a response.";
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("X-Accel-Buffering", "no"); // stop proxies from buffering the stream
+    if (res.flushHeaders) res.flushHeaders();
 
-    res.json({
-      success: true,
-      mode,
-      reply,
-      source: "Google Gemini"
-    });
+    let sentAny = false;
+    for await (const chunk of stream) {
+      if (chunk.text) {
+        sentAny = true;
+        res.write(chunk.text);
+      }
+    }
+    if (!sentAny) res.write("I could not generate a response.");
+    res.end();
   } catch (error) {
     console.error("Gemini error:", error);
-
-    res.status(502).json({
-      success: false,
-      error: "Gemini service is temporarily unavailable. Check your API key, model, quota, and internet connection."
-    });
+    if (!res.headersSent) {
+      res.status(502).json({
+        success: false,
+        error: "Gemini service is temporarily unavailable. Check your API key, model, quota, and internet connection."
+      });
+    } else {
+      res.write("\n\n⚠️ Jawab beech me ruk gaya — dobara try karein.");
+      res.end();
+    }
   }
 });
 
