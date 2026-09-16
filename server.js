@@ -139,6 +139,7 @@ const QUICK_REPLIES = new Map([
   ["mazak kar raha tha", "😂 Achha! Ek second ke liye serious ho gaya tha."],
   ["tum funny ho", "Koshish karta hoon 😎"],
   ["love you", "Oo gandu aukaat me"],
+  ["Good morning", "Good morning chalo kholo ab maru"],
 ]);
 
 function normalizeQuickReply(text) {
