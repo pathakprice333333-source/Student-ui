@@ -84,9 +84,9 @@ function isCreatorQuestion(message) {
 }
 
 const QUICK_REPLIES = new Map([
-  ["kya kar rahe ho", "Bas tumse baat kar raha hoon 😄 Batao kya chal raha hai?"],
-  ["kaise ho", "Main bilkul badhiya hoon 😊 Tum batao, kaise ho?"],
-  ["kya haal hai", "Sab badhiya 😄 Tumhara kya haal hai?"],
+  ["kya kar rahe ho", "tumhari yaad me muthi mar raha hu"],
+  ["kaise ho", "mood me"],
+  ["kya haal hai", "wahi gand wahi laad hai"],
   ["kahan ho", "Main yahin online hoon, tumhari help ke liye ready 😄"],
   ["kya kar sakte ho", "Main questions ke answers, padhai, coding, planning, writing aur bahut si cheezon me help kar sakta hoon."],
   ["tumhara naam kya hai", "Mera naam STUDENT AI hai 🤖"],
@@ -95,7 +95,7 @@ const QUICK_REPLIES = new Map([
   ["tumhe kisne banaya", "Mujhe mere developer ne AI assistant ke roop me develop kiya hai."],
   ["khana khaya", "Main AI hoon, isliye khana nahi khata 😄 Tumne khaya?"],
   ["chai piyoge", "Main chai nahi pee sakta 😂 Lekin chai ke saath baatein zaroor kar sakta hoon."],
-  ["so rahe ho", "Nahi 😄 Jab bhi tum message karoge, main available hoon."],
+  ["so rahe ho", "Nahi 😄 chut chat raha hu tumhari maa ki"],
   ["busy ho", "Nahi, bolo 😄 Main tumhari baat sun raha hoon."],
   ["free ho", "Haan 😄 Batao kya karna hai?"],
   ["bore ho raha hoon", "Chalo kuch interesting karte hain 😄 Quiz, puzzle, game ya random baatein?"],
