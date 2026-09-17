@@ -64,7 +64,7 @@ const modeInstructions = {
 };
 
 const CREATOR_REPLY =
-  "Mere malik Prince aur Ankur hain. (In English: My masters are Prince and Ankur.)";
+  "Mere malik Palak prince pathak hain. (In English: My masters are Prince and Ankur.)";
 
 function isCreatorQuestion(message) {
   const text = message.toLowerCase();
