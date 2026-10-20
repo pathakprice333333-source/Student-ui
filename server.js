@@ -116,7 +116,7 @@ const modeInstructions = {
 };
 
 const CREATOR_REPLY =
-  "Mere malik prince pathak hain.";
+  "Mere malik prince pathak aur ankur bokachuda hain.";
 
 function isCreatorQuestion(message) {
   const text = message.toLowerCase();
